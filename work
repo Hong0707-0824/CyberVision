@@ -1,0 +1,44 @@
+import cv2
+import numpy as np
+
+
+
+img=cv2.imread("picture/work.png")
+kernal=np.ones([3,3])
+
+def imgPreproess(img):
+
+    img=cv2.resize(img,(1050,750))
+    imgblur=cv2.GaussianBlur(img,(7,7),2)
+    imgHSV=cv2.cvtColor(imgblur,cv2.COLOR_BGR2HSV)
+    imgCanny=cv2.Canny(img,50,50)
+    imgdilation=cv2.dilate(imgCanny,kernal,iterations=2)
+    imgerod=cv2.erode(imgdilation,kernal,iterations=2)
+    return imgerod
+
+
+
+
+
+
+
+def getContoure(Preimg,imgContoure):
+    contours, hierarchy = cv2.findContours(Preimg,cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+    cv2.drawContours(imgContoure,contours,2,(255,0,0),2)
+    area2=cv2.contourArea(contours[2])
+    area0=cv2.contourArea(contours[0])
+    print(len(contours))
+    print(area2,area0)
+
+
+
+
+
+
+
+Preimg=imgPreproess(img)
+imgContoure=np.zeros_like(Preimg)
+getContoure(Preimg,imgContoure)
+
+cv2.imshow("imgContoure",imgContoure)
+cv2.waitKey(0)
